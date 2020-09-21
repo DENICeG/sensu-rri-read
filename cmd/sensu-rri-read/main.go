@@ -30,20 +30,20 @@ func main() {
 	password := whiteflag.GetString("password")
 	rriServer := whiteflag.GetString("server") + ":51131"
 
-	rriQuery := rri.NewCheckDomainQuery(domainToCheck)
 	rriClient, err = rri.NewClient(rriServer, nil)
 	if err != nil {
 		printFailMetricsAndExit("could not connect to RRI server:", err.Error())
 	}
-	defer rriClient.Logout() // nolint:errcheck
 
 	err = rriClient.Login(regacc, password)
 	if err != nil {
 		printFailMetricsAndExit("login failed:", err.Error())
 	}
+	defer rriClient.Logout() // nolint:errcheck
 
 	timeLoginDone := time.Now()
 
+	rriQuery := rri.NewCheckDomainQuery(domainToCheck)
 	rriResponse, err := rriClient.SendQuery(rriQuery)
 	if err != nil {
 		printFailMetricsAndExit("SendQuery() failed:", err.Error())
