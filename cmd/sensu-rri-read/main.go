@@ -13,10 +13,14 @@ import (
 var (
 	timeBegin = time.Now()
 	rriClient *rri.Client
+	fails     int
 )
 
 func main() {
+	run()
+}
 
+func run() {
 	var err error
 	log.SetOutput(os.Stderr)
 
@@ -39,7 +43,6 @@ func main() {
 	if err != nil {
 		printFailMetricsAndExit("login failed:", err.Error())
 	}
-	defer rriClient.Logout() // nolint:errcheck
 
 	timeLoginDone := time.Now()
 
@@ -66,9 +69,17 @@ func main() {
 	} else {
 		printFailMetricsAndExit("invalid response from RRI")
 	}
+
+	rriClient.Logout() // nolint:errcheck
+	os.Exit(0)
 }
 
 func printFailMetricsAndExit(errors ...string) {
+
+	if fails < 3 {
+		fails++
+		run()
+	}
 
 	errStr := "ERROR:"
 
