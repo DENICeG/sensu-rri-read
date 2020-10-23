@@ -11,12 +11,26 @@ import (
 )
 
 var (
-	timeBegin = time.Now()
-	rriClient *rri.Client
-	fails     int
+	timeBegin     = time.Now()
+	rriClient     *rri.Client
+	fails         int
+	domainToCheck string
+	regacc        string
+	password      string
+	rriServer     string
 )
 
 func main() {
+	whiteflag.Alias("d", "domain", "sets the domain to use in CHECK order")
+	whiteflag.Alias("r", "regacc", "sets the regacc to use")
+	whiteflag.Alias("p", "password", "sets the password to use")
+	whiteflag.Alias("s", "server", "sets the RRI server to use")
+
+	domainToCheck = whiteflag.GetString("domain")
+	regacc = whiteflag.GetString("regacc")
+	password = whiteflag.GetString("password")
+	rriServer = whiteflag.GetString("server") + ":51131"
+
 	run()
 }
 
@@ -24,15 +38,9 @@ func run() {
 	var err error
 	log.SetOutput(os.Stderr)
 
-	whiteflag.Alias("d", "domain", "sets the domain to use in CHECK order")
-	whiteflag.Alias("r", "regacc", "sets the regacc to use")
-	whiteflag.Alias("p", "password", "sets the password to use")
-	whiteflag.Alias("s", "server", "sets the RRI server to use")
-
-	domainToCheck := whiteflag.GetString("domain")
-	regacc := whiteflag.GetString("regacc")
-	password := whiteflag.GetString("password")
-	rriServer := whiteflag.GetString("server") + ":51131"
+	if rriClient != nil {
+		rriClient.Logout() // nolint:errcheck
+	}
 
 	rriClient, err = rri.NewClient(rriServer, nil)
 	if err != nil {
