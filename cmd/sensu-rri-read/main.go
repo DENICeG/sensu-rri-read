@@ -37,6 +37,8 @@ func main() {
 func run() {
 	var err error
 	log.SetOutput(os.Stderr)
+	log.SetPrefix("UTC ")
+	log.SetFlags(log.Ltime | log.Lmsgprefix | log.LUTC)
 
 	if rriClient != nil {
 		rriClient.Logout() // nolint:errcheck

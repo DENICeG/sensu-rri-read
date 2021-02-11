@@ -3,5 +3,5 @@ api_version: core/v2
 metadata:
   name: sensu-rri-read
 spec:
-  sha512: ecb93fbabbd022b6323bc1687471b94865f0b9738456a8aff7a5c21dc72ffcceedf8133b269421fad460dd0f069a97dc7f1f7652e3572cc782b2e01f2a0be536
-  url: https://github.com/DENICeG/sensu-rri-read/releases/download/v1.0.2/sensu-rri-read_v1.0.2_linux_amd64.tar.gz
+  sha512: c080420ec60e22e06b40d29dc2ab432bb7472a9694940a22d0e976ee929b9f9e7988fac5c7b00aeef5a6693066ec57ae289f6be0e7fbfb50276805009f8f6995
+  url: https://github.com/DENICeG/sensu-rri-read/releases/download/v1.0.3/sensu-rri-read_v1.0.3_linux_amd64.tar.gz
