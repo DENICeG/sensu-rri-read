@@ -3,7 +3,7 @@ module github.com/DENICeG/sensu-rri-read
 go 1.18
 
 require (
-	github.com/DENICeG/go-rriclient v1.13.0
+	github.com/DENICeG/go-rriclient v1.14.0
 	github.com/danielb42/whiteflag v1.2.7
 )
 
