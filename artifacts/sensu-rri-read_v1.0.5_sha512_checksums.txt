@@ -1,1 +1,0 @@
-3339cb51ea288f0e84d832530d2f37a31bcb83857d3fe2ea9cc8d19b84b1250bc7e388beec28ad0c8221728c5de99b0265ef1c6c64fd2d5f15c6eff7ee48a431  sensu-rri-read_v1.0.5_linux_amd64.tar.gz
