@@ -44,7 +44,7 @@ func run() {
 		rriClient.Logout() // nolint:errcheck
 	}
 
-	rriClient, err = rri.NewClient(rriServer, nil)
+	rriClient, err = rri.NewClient(rriServer, &rri.ClientConfig{})
 	if err != nil {
 		printFailMetricsAndExit("could not connect to RRI server:", err.Error())
 	}
