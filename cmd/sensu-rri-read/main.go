@@ -18,6 +18,7 @@ var (
 	regacc        string
 	password      string
 	rriServer     string
+	insecure      bool
 )
 
 func main() {
@@ -25,11 +26,13 @@ func main() {
 	whiteflag.Alias("r", "regacc", "sets the regacc to use")
 	whiteflag.Alias("p", "password", "sets the password to use")
 	whiteflag.Alias("s", "server", "sets the RRI server to use")
+	whiteflag.Alias("i", "insecure", "disable TLS certificate check")
 
 	domainToCheck = whiteflag.GetString("domain")
 	regacc = whiteflag.GetString("regacc")
 	password = whiteflag.GetString("password")
 	rriServer = whiteflag.GetString("server") + ":51131"
+	insecure = whiteflag.CheckBool("insecure")
 
 	run()
 }
@@ -44,7 +47,9 @@ func run() {
 		rriClient.Logout() // nolint:errcheck
 	}
 
-	rriClient, err = rri.NewClient(rriServer, &rri.ClientConfig{})
+	rriClient, err = rri.NewClient(rriServer, &rri.ClientConfig{
+		Insecure: insecure,
+	})
 	if err != nil {
 		printFailMetricsAndExit("could not connect to RRI server:", err.Error())
 	}
