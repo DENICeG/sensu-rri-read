@@ -98,7 +98,9 @@ func run() {
 
 	if rriResponse.IsSuccessful() {
 		log.Printf("OK: RRI login + order: %dms + %dms = %dms\n\n", durationLogin, durationOrder, durationTotal)
-		fmt.Printf("RRI,ordertype=%s %s=%d,%s=%d,%s=%d,%s=%d %d\n",
+		// DO NOT alter this format, it is required by sla-handler to query Elastic
+		fmt.Printf("extmon,service=%s,ordertype=%s %s=%d,%s=%d,%s=%d,%s=%d %d\n",
+			"rri",
 			"CHECK",
 			"available", 1,
 			"login", durationLogin,
@@ -128,7 +130,9 @@ func printFailMetricsAndExit(errors ...string) {
 
 	log.Printf("%s\n\n", errStr)
 
-	fmt.Printf("RRI,ordertype=%s %s=%d,%s=%d,%s=%d,%s=%d %d\n",
+	// DO NOT alter this format, it is required by sla-handler to query Elastic
+	fmt.Printf("extmon,service=%s,ordertype=%s %s=%d,%s=%d,%s=%d,%s=%d %d\n",
+		"rri",
 		"CHECK",
 		"available", 0,
 		"login", 0,
