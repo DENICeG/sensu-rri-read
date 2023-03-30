@@ -1,8 +1,10 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"time"
 
@@ -11,14 +13,15 @@ import (
 )
 
 var (
-	timeBegin     = time.Now()
-	rriClient     *rri.Client
-	fails         int
-	domainToCheck string
-	regacc        string
-	password      string
-	rriServer     string
-	insecure      bool
+	timeBegin      = time.Now()
+	rriClient      *rri.Client
+	fails          int
+	domainToCheck  string
+	regacc         string
+	password       string
+	rriServer      string
+	insecure       bool
+	timeoutSeconds int
 )
 
 func main() {
@@ -33,6 +36,11 @@ func main() {
 	password = whiteflag.GetString("password")
 	rriServer = whiteflag.GetString("server") + ":51131"
 	insecure = whiteflag.CheckBool("insecure")
+	if whiteflag.CheckInt("timeout") {
+		timeoutSeconds = whiteflag.GetInt("timeout")
+	} else {
+		timeoutSeconds = 5
+	}
 
 	run()
 }
@@ -49,10 +57,21 @@ func run() {
 
 	rriClient, err = rri.NewClient(rriServer, &rri.ClientConfig{
 		Insecure: insecure,
+		TLSDialHandler: func(network, addr string, config *tls.Config) (rri.TLSConnection, error) {
+			conn, err := tls.DialWithDialer(&net.Dialer{
+				Timeout: time.Duration(timeoutSeconds) * time.Second,
+			}, network, addr, config)
+			if err != nil {
+				return nil, err
+			}
+			conn.SetDeadline(time.Now().Add(time.Duration(timeoutSeconds) * time.Second))
+			return conn, nil
+		},
 	})
 	if err != nil {
 		printFailMetricsAndExit("could not connect to RRI server:", err.Error())
 	}
+	rriClient.NoAutoRetry = true
 
 	err = rriClient.Login(regacc, password)
 	if err != nil {
@@ -73,8 +92,7 @@ func run() {
 
 	if rriResponse.IsSuccessful() {
 		log.Printf("OK: RRI login + order: %dms + %dms = %dms\n\n", durationLogin, durationOrder, durationTotal)
-		fmt.Printf("extmon,service=%s,ordertype=%s %s=%d,%s=%d,%s=%d,%s=%d %d\n",
-			"rri",
+		fmt.Printf("RRI,ordertype=%s %s=%d,%s=%d,%s=%d,%s=%d %d\n",
 			"CHECK",
 			"available", 1,
 			"login", durationLogin,
