@@ -22,6 +22,7 @@ var (
 	rriServer      string
 	insecure       bool
 	timeoutSeconds int
+	numRetries     int
 )
 
 func main() {
@@ -40,6 +41,11 @@ func main() {
 		timeoutSeconds = whiteflag.GetInt("timeout")
 	} else {
 		timeoutSeconds = 5
+	}
+	if whiteflag.CheckInt("retries") {
+		numRetries = whiteflag.GetInt("retries")
+	} else {
+		numRetries = 3
 	}
 
 	run()
@@ -87,7 +93,7 @@ func run() {
 	}
 
 	durationLogin := timeLoginDone.Sub(timeBegin).Milliseconds()
-	durationOrder := time.Now().Sub(timeLoginDone).Milliseconds() // nolint:gosimple
+	durationOrder := time.Since(timeLoginDone).Milliseconds()
 	durationTotal := durationLogin + durationOrder
 
 	if rriResponse.IsSuccessful() {
@@ -109,7 +115,7 @@ func run() {
 
 func printFailMetricsAndExit(errors ...string) {
 
-	if fails < 3 {
+	if fails < numRetries {
 		fails++
 		run()
 	}
@@ -122,8 +128,7 @@ func printFailMetricsAndExit(errors ...string) {
 
 	log.Printf("%s\n\n", errStr)
 
-	fmt.Printf("extmon,service=%s,ordertype=%s %s=%d,%s=%d,%s=%d,%s=%d %d\n",
-		"rri",
+	fmt.Printf("RRI,ordertype=%s %s=%d,%s=%d,%s=%d,%s=%d %d\n",
 		"CHECK",
 		"available", 0,
 		"login", 0,
