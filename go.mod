@@ -3,11 +3,11 @@ module github.com/DENICeG/sensu-rri-read
 go 1.18
 
 require (
-	github.com/DENICeG/go-rriclient v1.14.0
+	github.com/DENICeG/go-rriclient v1.18.0
 	github.com/danielb42/whiteflag v1.2.7
 )
 
 require (
-	golang.org/x/net v0.0.0-20220526153639-5463443f8c37 // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/net v0.21.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 )
